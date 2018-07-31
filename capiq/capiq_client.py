@@ -13,7 +13,7 @@ class CiqServiceException(Exception):
     pass
 
 class CapIQClient:
-    _endpoint = 'https://sdk.gds.standardandpoors.com/gdssdk/rest/v2/clientservice.json'
+    _endpoint = 'https://api-ciq.marketintelligence.spglobal.com/gdsapi/rest/v3/clientservice.json'
     _headers = {'Content-Type': 'application/x-www-form-urlencoded', 'Accept-Encoding': 'gzip,deflate'}
     _verify = True  # Disable SSL Checks for requests. Set to False to avoid SSL blocking in secured networks
     _username = None
