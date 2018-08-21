@@ -146,11 +146,11 @@ class CapIQClient:
         req = {"inputRequests": req_array}
         response = requests.post(self._endpoint, headers=self._headers, data=json.dumps(req),
                                  auth=HTTPBasicAuth(self._username, self._password), verify=self._verify)
-        print('==============================')
-        print('==============================')
-        print('response', response)
-        print('==============================')
-        print('==============================')
+        logging.info('==============================')
+        logging.info('==============================')
+        logging.info('response', response)
+        logging.info('==============================')
+        logging.info('==============================')
         if self._debug:
             logging.info("Cap IQ response")
             logging.info(response.json())
