@@ -18,7 +18,7 @@ class CapIQClient:
     _verify = True  # Disable SSL Checks for requests. Set to False to avoid SSL blocking in secured networks
     _username = None
     _password = None
-    _debug = True
+    _debug = False
     _request_caching_enabled = False
     request_count = 0
 
@@ -146,48 +146,49 @@ class CapIQClient:
         req = {"inputRequests": req_array}
         response = requests.post(self._endpoint, headers=self._headers, data=json.dumps(req),
                                  auth=HTTPBasicAuth(self._username, self._password), verify=self._verify)
-        if self._debug:
-            logging.info("Cap IQ response")
-            logging.info(response)
-            logging.info(response.json())
-            logging.info("reponse from cache: {}".format(response.from_cache))
-        if self._request_caching_enabled and not response.from_cache:
-            self.request_count += tmp_request_count
-            self.cache_request_count()
-
-        if len(response.json()['GDSSDKResponse']) == 1 and \
-                        len(response.json()['GDSSDKResponse'][0]) == 1 and \
-                        "ErrMsg" in response.json()['GDSSDKResponse'][0].keys():
-            # for catching service level issues such as request limit
-            # this is an example of what we can catch:
-            # {'GDSSDKResponse': [{'ErrMsg': 'Daily Request Limit of 10000 Exceeded'}]}
-            raise CiqServiceException(response.json()['GDSSDKResponse'][0]["ErrMsg"])
-        for return_index, ret in enumerate(response.json()['GDSSDKResponse']):
-            identifier = ret['Identifier']
-            if identifier not in returnee:
-                returnee[identifier] = {}
-            returned_properties = {}
-            if "Properties" in ret:
-                returned_properties = ret['Properties']
-            if ret['ErrMsg']:
-                logging.error(
-                    'Cap IQ error for ' + identifier + ' + ' + ret['Mnemonic'] + ' query: ' + ret['ErrMsg'])
-                returnee[identifier][
-                    self.get_return_key(ret['Mnemonic'], returned_properties, mnemonic_return_keys)] = None
-            else:
-                for i_m, h_m in enumerate(ret["Headers"]):
-                    if multiple_results_expected:
-                        returnee[identifier][
-                            self.get_return_key(ret['Mnemonic'], returned_properties, mnemonic_return_keys)] = []
-                        for row in ret["Rows"]:
-                            returnee[identifier][
-                                self.get_return_key(ret['Mnemonic'], returned_properties, mnemonic_return_keys)
-                            ].append(row['Row'])
-                    else:
-                        returnee[identifier][
-                            self.get_return_key(ret['Mnemonic'], returned_properties, mnemonic_return_keys)
-                        ] = ret['Rows'][i_m]['Row'][0]
-        return returnee
+        return response
+        # if self._debug:
+        #     logging.info("Cap IQ response")
+        #     logging.info(response)
+        #     logging.info(response.json())
+        #     logging.info("reponse from cache: {}".format(response.from_cache))
+        # if self._request_caching_enabled and not response.from_cache:
+        #     self.request_count += tmp_request_count
+        #     self.cache_request_count()
+        #
+        # if len(response.json()['GDSSDKResponse']) == 1 and \
+        #                 len(response.json()['GDSSDKResponse'][0]) == 1 and \
+        #                 "ErrMsg" in response.json()['GDSSDKResponse'][0].keys():
+        #     # for catching service level issues such as request limit
+        #     # this is an example of what we can catch:
+        #     # {'GDSSDKResponse': [{'ErrMsg': 'Daily Request Limit of 10000 Exceeded'}]}
+        #     raise CiqServiceException(response.json()['GDSSDKResponse'][0]["ErrMsg"])
+        # for return_index, ret in enumerate(response.json()['GDSSDKResponse']):
+        #     identifier = ret['Identifier']
+        #     if identifier not in returnee:
+        #         returnee[identifier] = {}
+        #     returned_properties = {}
+        #     if "Properties" in ret:
+        #         returned_properties = ret['Properties']
+        #     if ret['ErrMsg']:
+        #         logging.error(
+        #             'Cap IQ error for ' + identifier + ' + ' + ret['Mnemonic'] + ' query: ' + ret['ErrMsg'])
+        #         returnee[identifier][
+        #             self.get_return_key(ret['Mnemonic'], returned_properties, mnemonic_return_keys)] = None
+        #     else:
+        #         for i_m, h_m in enumerate(ret["Headers"]):
+        #             if multiple_results_expected:
+        #                 returnee[identifier][
+        #                     self.get_return_key(ret['Mnemonic'], returned_properties, mnemonic_return_keys)] = []
+        #                 for row in ret["Rows"]:
+        #                     returnee[identifier][
+        #                         self.get_return_key(ret['Mnemonic'], returned_properties, mnemonic_return_keys)
+        #                     ].append(row['Row'])
+        #             else:
+        #                 returnee[identifier][
+        #                     self.get_return_key(ret['Mnemonic'], returned_properties, mnemonic_return_keys)
+        #                 ] = ret['Rows'][i_m]['Row'][0]
+        # return returnee
 
     @staticmethod
     def build_mnemonic_return_key_index(mnemonics, return_keys, properties):
