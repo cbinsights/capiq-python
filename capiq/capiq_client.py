@@ -145,7 +145,7 @@ class CapIQClient:
                                   "properties": properties[i] if properties else {}})
                 tmp_request_count += 1
         req = {"inputRequests": req_array}
-        response = requests.post(self._endpoint, headers=self._headers, data=json.dumps(req), auth=HTTPBasicAuth(self._username, self._password), verify=self._verify)
+        response = requests.post(self._endpoint, headers=self._headers, json=req, auth=HTTPBasicAuth(self._username, self._password), verify=self._verify)
         pdb.set_trace()
         return response
         # if self._debug:
