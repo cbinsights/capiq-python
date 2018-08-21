@@ -18,7 +18,7 @@ class CapIQClient:
     _verify = True  # Disable SSL Checks for requests. Set to False to avoid SSL blocking in secured networks
     _username = None
     _password = None
-    _debug = False
+    _debug = True
     _request_caching_enabled = False
     request_count = 0
 
@@ -148,6 +148,7 @@ class CapIQClient:
                                  auth=HTTPBasicAuth(self._username, self._password), verify=self._verify)
         if self._debug:
             logging.info("Cap IQ response")
+            logging.info(response)
             logging.info(response.json())
             logging.info("reponse from cache: {}".format(response.from_cache))
         if self._request_caching_enabled and not response.from_cache:
