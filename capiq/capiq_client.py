@@ -148,7 +148,6 @@ class CapIQClient:
 
         if self._debug:
             logging.info("Cap IQ response")
-            logging.info(response)
             logging.info(response.json())
             logging.info("reponse from cache: {}".format(response.from_cache))
         if self._request_caching_enabled and not response.from_cache:
