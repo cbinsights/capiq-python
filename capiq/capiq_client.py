@@ -15,7 +15,7 @@ class CiqServiceException(Exception):
 
 class CapIQClient:
     _endpoint = 'https://api-ciq.marketintelligence.spglobal.com/gdsapi/rest/v3/clientservice.json'
-    _headers = {'Content-type': 'application/json', 'Accept-Encoding': 'gzip,deflate', 'Content-Type': 'application/json'}
+    _headers = {'Accept-Encoding': 'gzip,deflate'}
     _verify = True  # Disable SSL Checks for requests. Set to False to avoid SSL blocking in secured networks
     _username = None
     _password = None
